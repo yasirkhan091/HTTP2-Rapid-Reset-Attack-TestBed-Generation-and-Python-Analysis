@@ -1,0 +1,21 @@
+docker build -t http2-normal .
+docker run -d -p 3000:3000 --network=bridge --name http2-server-container my-http2-server
+docker run -d -p 5002:5002 --network=bridge --name http2-normal-container2 http2-normal
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' http2-server-container
+docker exec -it http2-server-container /bin/bash
+apt-get update
+apt-get install -y tcpdump
+tcpdump -i eth0 -w ./output.pcap
+docker cp http2-server-container:/usr/src/app/output.pcap C:\Users\ylord\OneDrive\Documents\output.pcap
+
+apt-get update
+apt-get install -y iputils-ping
+
+
+tshark -r C:\Users\ylord\OneDrive\Documents\finalDataset6040.pcap -T fields -E separator=, -E quote=d -E header=y -e ip.src -e ip.dst -e tcp.srcport -e tcp.dstport -e udp.srcport -e udp.dstport -e ip.proto -e tcp.flags -e frame.time_relative -e frame.len > output.csv
+
+tshark -r C:\Users\ylord\OneDrive\Documents\finalDataset6040.pcap -T fields -E separator=, -E quote=d -E header=y -e ip.src -e ip.dst -e tcp.srcport -e tcp.dstport -e udp.srcport -e udp.dstport -e ip.proto -e tcp.flags -e frame.time_relative -e frame.len -e http2.streamid -e http2.type > output.csv
+
+2,4,5,6,7-normal
+3,8,9,10-rst
+1-attacker
